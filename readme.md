@@ -87,5 +87,14 @@ elham/
 
 ## links
 
-- **author:** [mirza baig](https://www.meetmirza.com/)
-- **api readme:** [appointment-api/readme.md](appointment-api/readme.md)
+<p align="center">
+  <a href="https://www.meetmirza.com/" title="mirza baig — portfolio">
+    <img src="https://img.shields.io/badge/author-mirza_baig-0B3D2E?style=for-the-badge&logo=vercel&logoColor=F7F5EF" alt="author: mirza baig" />
+  </a>
+  <a href="appointment-api/readme.md" title="api setup, tests, and spec">
+    <img src="https://img.shields.io/badge/api-readme-1B8354?style=for-the-badge&logo=markdown&logoColor=white" alt="api readme" />
+  </a>
+  <a href="https://github.com/MiirzaBaig/elham" title="source repository">
+    <img src="https://img.shields.io/badge/repo-elham-181717?style=for-the-badge&logo=github&logoColor=white" alt="github repo" />
+  </a>
+</p>

@@ -118,6 +118,22 @@ npm run demo:build                          # then :3000/demo/
 
 ---
 
+## links
+
+<p align="center">
+  <a href="https://www.meetmirza.com/" title="mirza baig — portfolio">
+    <img src="https://img.shields.io/badge/author-mirza_baig-0B3D2E?style=for-the-badge&logo=vercel&logoColor=F7F5EF" alt="author: mirza baig" />
+  </a>
+  <a href="../readme.md" title="repository overview">
+    <img src="https://img.shields.io/badge/root-readme-4169E1?style=for-the-badge&logo=gitbook&logoColor=white" alt="root readme" />
+  </a>
+  <a href="http://localhost:3000/docs" title="swagger ui (local)">
+    <img src="https://img.shields.io/badge/swagger-openapi-E0234E?style=for-the-badge&logo=swagger&logoColor=white" alt="swagger" />
+  </a>
+</p>
+
+---
+
 ## time spent
 
 _~4–5h — adjust before final submit._
