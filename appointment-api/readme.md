@@ -1,197 +1,127 @@
-# appointment booking api
+<div align="center">
 
-![logo](assets/logo.svg)
+<img src="assets/logo.svg" width="56" height="56" alt="logo" />
+
+# appointment booking api
 
 nestjs · postgresql · prisma · socket.io · swagger
 
-**mirza baig** — [meetmirza.com](https://www.meetmirza.com/)
+[mirza baig](https://www.meetmirza.com/) · [meetmirza.com](https://www.meetmirza.com/)
 
-recruitment exercise: three rest endpoints, one active booking per slot, socket events after commit, postgres e2e tests. no auth. optional demo in `demo-ui/` (excluded from zip).
+</div>
+
+recruitment exercise — fixed slots, one active booking per slot, socket events after commit, postgres e2e tests. no auth. demo in `demo-ui/` (excluded from zip).
+
+<p align="center">
+  <img src="https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white" alt="node 20+" />
+  <img src="https://img.shields.io/badge/nestjs-11-E0234E?logo=nestjs&logoColor=white" alt="nestjs" />
+  <img src="https://img.shields.io/badge/postgres-14%2B-4169E1?logo=postgresql&logoColor=white" alt="postgres" />
+  <img src="https://img.shields.io/badge/tests-12%20e2e-1B8354" alt="tests" />
+</p>
 
 ---
 
-## quick start (reviewer)
+## quick start
 
-needs: node 20+, postgres 14+, npm.
+**needs:** node 20+, postgres 14+, npm
 
 ```bash
+cd appointment-api
 npm install
-# if prisma scripts blocked:
-npm install-scripts approve prisma @prisma/client @prisma/engines
+npm install-scripts approve prisma @prisma/client @prisma/engines  # if needed
 
-cp .env.example .env
-cp .env.example .env.test
-```
+cp .env.example .env && cp .env.example .env.test
+# two db names: appointments + appointments_test
 
-use two databases in those files (e.g. `appointments` and `appointments_test`).
-
-```bash
 createdb appointments 2>/dev/null || true
 createdb appointments_test 2>/dev/null || true
 
 npm run test:ci
-npx prisma migrate deploy
-npm run db:seed
+npx prisma migrate deploy && npm run db:seed
 npm run start:dev
 ```
 
-| url | purpose |
-|-----|---------|
-| http://localhost:3000/docs | swagger |
-| http://localhost:3000/openapi.json | openapi |
-| http://localhost:3000/slots | list slots |
+| link | |
+|------|--|
+| [swagger](http://localhost:3000/docs) | try the api |
+| [openapi.json](http://localhost:3000/openapi.json) | spec |
+| `/slots` | list available slots |
 
-zip: `npm run zip` → `appointment-booking-api.zip`
-
----
-
-## env
-
-| variable | use |
-|----------|-----|
-| `DATABASE_URL` | postgres connection string |
-| `PORT` | default 3000 |
-
-`.env` → dev api. `.env.test` → jest (separate db; tests delete bookings).
+submission: `npm run zip`
 
 ---
 
-## database
+<details>
+<summary><strong>api summary</strong></summary>
 
-```bash
-npx prisma migrate deploy
-npm run db:seed
-```
-
-seed example slot: `11111111-1111-4111-8111-111111111111` (2030-01-15 09:00–09:30 utc).
-
----
-
-## scripts
-
-| command | |
-|---------|--|
-| `npm run start:dev` | api watch mode |
-| `npm test` | e2e (test db seeded/migrated) |
-| `npm run test:ci` | migrate + seed test db + e2e |
-| `npm run socket:listen` | print socket events |
-| `npm run demo:dev` | demo ui on :5173 |
-| `npm run demo:build` | static demo → `/demo` on api |
-
----
-
-## tests
-
-real postgres, no mocked booking store. 12 cases including parallel post (201 + 409), cancel flow, error codes, socket emit / no emit on 409.
-
-```bash
-npm run test:ci
-```
-
----
-
-## api
-
-json bodies. uuid ids. iso 8601 utc timestamps. no authentication.
-
-### get /slots
-
-available slots only; sort `startsAt`, then `id`.
-
-### post /bookings
-
-body: `slotId`, `customerName`, `customerEmail` (trimmed before validate/save).
-
-| status | code |
-|--------|------|
-| 201 | created |
-| 400 | `VALIDATION_ERROR` |
-| 404 | `SLOT_NOT_FOUND` |
-| 409 | `SLOT_UNAVAILABLE` |
-| 500 | `INTERNAL_ERROR` |
-
-### delete /bookings/{bookingId}
-
-200 + `status: cancelled`. repeat delete → same 200, no socket event.
+| method | path | notes |
+|--------|------|--------|
+| get | `/slots` | available only, sorted |
+| post | `/bookings` | 201 / 400 / 404 / 409 |
+| delete | `/bookings/:id` | cancel, idempotent 200 |
 
 errors: `{ "error": { "code", "message" } }`
 
----
+</details>
 
-## socket.io
+<details>
+<summary><strong>socket.io</strong></summary>
 
-path `/socket.io`, namespace `/`.
+path `/socket.io` · namespace `/`
 
-after successful commit:
+- `slot.booked` / `slot.released` after commit only  
+- no pii, no events on 4xx or repeat cancel  
 
-- `slot.booked` → `{ slotId, bookingId, available: false }`
-- `slot.released` → `{ slotId, bookingId, available: true }`
+`npm run socket:listen`
 
-no customer fields. no events on 4xx or repeat cancel.
+</details>
 
-```bash
-npm run socket:listen
-```
-
----
-
-## conflict prevention
-
-partial unique index:
+<details>
+<summary><strong>conflict prevention</strong></summary>
 
 ```sql
 create unique index bookings_one_active_per_slot
   on bookings (slot_id) where status = 'active';
 ```
 
-concurrent inserts: one wins, other → prisma `P2002` → 409.
+parallel posts → one 201, one 409.
 
----
+</details>
 
-## optional demo ui
-
-folder: `demo-ui/` (not in submission zip).
+<details>
+<summary><strong>demo ui (optional)</strong></summary>
 
 ```bash
-npm run demo:install   # once
-npm run demo:dev       # http://localhost:5173
-# or
-npm run demo:build && npm run start:dev   # http://localhost:3000/demo/
+npm run demo:install && npm run demo:dev    # :5173
+npm run demo:build                          # then :3000/demo/
 ```
 
----
+</details>
 
-## layout
+<details>
+<summary><strong>env & scripts</strong></summary>
 
-```
-src/           nest modules (slots, bookings, events)
-prisma/        schema, migrations, seed
-test/e2e/      integration tests
-demo-ui/       optional front-end
-scripts/       socket-listen, make-zip
-assets/        logo
-```
+| variable | use |
+|----------|-----|
+| `DATABASE_URL` | postgres url |
+| `PORT` | default 3000 |
 
----
+`.env` = dev · `.env.test` = jest (separate db)
 
-## zip contents
+| script | |
+|--------|--|
+| `npm test` | e2e |
+| `npm run test:ci` | migrate + seed test db + e2e |
+| `npm run socket:listen` | watch events |
 
-included: source, lockfile, prisma, tests, readme.md, `.env.example`.
-
-excluded: `node_modules`, `dist`, `demo-ui/`, `.env*`, secrets.
+</details>
 
 ---
 
 ## time spent
 
-update before submit: _~4–5h (api, tests, swagger, demo, docs)._
-
-## unfinished
-
-_none vs spec._
+_~4–5h — adjust before final submit._
 
 ## ai disclosure
 
-cursor assisted with boilerplate and tests. i reviewed behavior against the brief and ran `npm run test:ci` locally.
-
-author: [mirza baig](https://www.meetmirza.com/)
+cursor used for boilerplate and tests; behavior checked against the brief; `npm run test:ci` run locally.
