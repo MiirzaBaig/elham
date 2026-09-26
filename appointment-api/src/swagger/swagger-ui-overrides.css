@@ -1,0 +1,42 @@
+.swagger-ui .scheme-container {
+  box-shadow: none;
+  padding: 16px 0;
+  background: transparent;
+}
+
+.swagger-ui .schemes.wrapper,
+.swagger-ui .servers {
+  display: block;
+}
+
+.swagger-ui .servers > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #3b4151;
+}
+
+.swagger-ui .servers select,
+.swagger-ui .servers .servers-title + select {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  position: static;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #3b4151;
+  background: #fff;
+  border: 1px solid #d8dee4;
+  border-radius: 8px;
+  box-shadow: none;
+  appearance: auto;
+  -webkit-appearance: menulist;
+  cursor: pointer;
+}
+
+.swagger-ui .servers select:focus {
+  outline: 2px solid rgba(73, 204, 144, 0.45);
+  border-color: #49cc90;
+}

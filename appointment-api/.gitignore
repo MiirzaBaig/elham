@@ -1,0 +1,11 @@
+node_modules/
+dist/
+demo-ui/node_modules/
+demo-ui/dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.test
+.env.local
+*.zip
+.DS_Store
